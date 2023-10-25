@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AndroidShopTemplate</string>
+    <string name="add_product">Add Product</string>
+    <string name="productname">Productname</string>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
+</resources>
