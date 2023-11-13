@@ -5,25 +5,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var searchView: SearchView
-    private lateinit var addProdButt: Button
-    private lateinit var dbhelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var dbhelper = DatabaseHelper(this)
-
-        searchView = findViewById(R.id.searchView)
-        addProdButt = findViewById(R.id.addProductToDatabaseButton)
+        var dbHelper = DatabaseHelper(this)
+        val searchView = R.id.searchView
+        var addProdButt = R.id.addProductToDatabaseButton
 
         // Search bar searching
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -31,7 +24,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("SEARCHBAR", "onQueryTextSubmit: Debug query -> $query")
                 if (!query.isNullOrBlank()) {
                     // What happens when search is executed
-                    val products = dbhelper.searchProduct(query)
+                    val products = dbHelper.searchProduct(query)
                     Log.d("SEARCHBAR", "onQueryTextSubmit: Search was executed")
                 }
                 return true
@@ -44,46 +37,45 @@ class MainActivity : AppCompatActivity() {
         })
 
         addProdButt.setOnClickListener(View.OnClickListener {
-            showAddProductDialog()
+            addProduct()
         })
     }
 
-    private fun showAddProductDialog() {
-        // TODO create xlm pendant
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_product, null)
-        val productNameEditText = dialogView.findViewById<EditText>(R.id.productNameEditText)
-        val productDescriptionEditText =
-            dialogView.findViewById<EditText>(R.id.productDescriptionEditText)
-        val productPriceditText = dialogView.findViewById<EditText>(R.id.productPriceEditText)
+    private fun addProduct() {
 
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Add product")
-            .setView(dialogView)
-            .setPositiveButton("Add") { dialog _ ->
-                val name = productNameEditText.text.toString()
-                val description = productDescriptionEditText.text.toString()
-                val priceText = productPriceditText.text.toString()
+        // Get fields and get values from them
+        val productNameEditText = R.id.productNameEditText
+        val productDescriptionEditText = R.id.productDescriptionEditText
+        val productPriceEditText = R.id.productPriceEditText
+        val enteredName = productNameEditText.toString()
+        val enteredDescription = productDescriptionEditText.toString()
+        val enteredPrice = productPriceEditText.toDouble()
 
-                if (name.isNotEmpty() && description.isNotEmpty() && priceText.isNotEmpty()) {
-                    val price = priceText.toDouble()
-                    val product = DatabaseHelper.Product(name, description, price)
-                    dbhelper.insertProduct(product)
+        // Check if all fields are filled
+        if (enteredName.isNotEmpty() && enteredDescription.isNotEmpty()) {
 
-                    // Reset input fields
-                    productNameEditText.text.clear()
-                    productDescriptionEditText.text.clear()
-                    productPriceEditText.text.clear()
-                } else {
-                    Toast.makeText(this, "Values can't be empty!", Toast.LENGTH_SHORT).show()
-                }
+            Log.d(
+                "ADD PRODUCT",
+                "addProduct: " + "name: $enteredName" + "desc: $enteredDescription" + "price $enteredPrice"
+            )
+            // If so, add product to database
+//            val product = DatabaseHelper.Product(enteredName, enteredDescription, enteredPrice)
+//            dbhelper.insertProduct(product)
 
-                dialog.dismiss()
-            }
-            .setNegativeButton("Exit") { dialog _ ->
-                dialog.dismiss()
-            }
-            .create()
+            // Reset input fields
 
-        dialog.show
+        } else {
+            Toast.makeText(this, "Values can't be empty!", Toast.LENGTH_SHORT).show()
+        }
+
+
+//    }.setNegativeButton("Exit")
+//    {
+//        dialog _ ->
+//        dialog.dismiss()
+//    }.create()
+//
+//    dialog.show
     }
+
 }
